@@ -1,34 +1,14 @@
 //
-//  Starscream+STOMPNetworking.swift
+//  STOMPClient+StarScream.swift
 //  
 //
-//  Created by Valentin Cherepyanko on 02.04.2021.
+//  Created by Valentin Cherepyanko on 09.10.2021.
 //
 
 import Foundation
 import Starscream
 
-extension WebSocket: IWebSocket {
-
-    public func disconnect() {
-        self.disconnect(closeCode: CloseCode.normal.rawValue)
-    }
-}
-
-extension StompClient {
-
-    public convenience init(url: URL) {
-
-        let urlRequest = URLRequest(url: url)
-        let socket = WebSocket(request: urlRequest)
-
-        self.init(socket: socket)
-
-        socket.delegate = self
-    }
-}
-
-extension StompClient: WebSocketDelegate {
+extension STOMPClient: WebSocketDelegate {
 
     public func didReceive(event: WebSocketEvent, client: WebSocket) {
 
@@ -44,5 +24,24 @@ extension StompClient: WebSocketDelegate {
         case .pong, .ping, .binary, .viabilityChanged, .reconnectSuggested, .cancelled:
             () // do nothing
         }
+    }
+}
+
+extension STOMPClient {
+
+    /// Convenience initialization method.
+    ///
+    /// - Parameters:
+    ///   - url: URL for internal web socket.
+    ///
+    /// - Returns: "Ready to go" STOMP client.
+    public convenience init(url: URL) {
+
+        let urlRequest = URLRequest(url: url)
+        let socket = WebSocket(request: urlRequest)
+
+        self.init(socket: socket)
+
+        socket.delegate = self
     }
 }

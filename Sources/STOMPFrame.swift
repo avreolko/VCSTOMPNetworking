@@ -1,5 +1,5 @@
 //
-//  StompFrame.swift
+//  STOMPFrame.swift
 //  STOMPNetworking
 //
 //  Created by Valentin Cherepyanko on 29.03.2021.
@@ -8,16 +8,16 @@
 import Foundation
 
 /// Фрейм STOMP-протокола.
-struct StompFrame {
+struct STOMPFrame {
 
     private static let lineFeed = "\n"
     private static let nullChar = "\0"
 
     /// Команда фрейма.
-    private(set) var command: StompCommand
+    private(set) var command: STOMPCommand
 
     /// Заголовки фрейма.
-    private(set) var headers: Set<StompHeader>
+    private(set) var headers: Set<STOMPHeader>
 
     /// Тело фрейма.
     private(set) var body: String?
@@ -28,7 +28,7 @@ struct StompFrame {
     ///   - command: Команда фрейма.
     ///   - headers: Заголовки фрейма.
     ///   - body: Тело фрейма.
-    init(command: StompCommand, headers: Set<StompHeader> = [], body: String? = nil) {
+    init(command: STOMPCommand, headers: Set<STOMPHeader> = [], body: String? = nil) {
         self.command = command
         self.headers = headers
         self.body = body
@@ -61,15 +61,15 @@ struct StompFrame {
         }
 
         // Команда
-        let command = try StompCommand(text: String(commandComponent))
+        let command = try STOMPCommand(text: String(commandComponent))
 
         // Заголовки
         let headerComponents = firstPartComponents?.dropFirst() ?? []
 
-        let headers: [StompHeader] = headerComponents.compactMap { headerString in
+        let headers: [STOMPHeader] = headerComponents.compactMap { headerString in
             let headerParts = headerString.components(separatedBy: ":")
             guard let key = headerParts.first, let value = headerParts.last else { return nil }
-            return StompHeader(key: key, value: value)
+            return STOMPHeader(key: key, value: value)
         }
 
         var body = (parts.count == 2) ? parts.last : nil

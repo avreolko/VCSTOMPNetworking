@@ -1,5 +1,5 @@
 //
-//  StompHeader.swift
+//  STOMPHeader.swift
 //  STOMPNetworking
 //
 //  Created by Valentin Cherepyanko on 29.03.2021.
@@ -8,7 +8,7 @@
 import Foundation
 
 /// Перечисление STOMP заголовков.
-enum StompHeader {
+enum STOMPHeader {
 
     /// Версия протокола, посылаемая клиентом.
     /// Возможные значения:
@@ -132,13 +132,13 @@ enum StompHeader {
     }
 }
 
-extension StompHeader: Hashable, Equatable {
+extension STOMPHeader: Hashable, Equatable {
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(key.hashValue)
     }
 
-    static func == (lhs: StompHeader, rhs: StompHeader) -> Bool {
+    static func == (lhs: STOMPHeader, rhs: STOMPHeader) -> Bool {
         return lhs.hashValue == rhs.hashValue
     }
 }

@@ -1,5 +1,5 @@
 //
-//  StompCommand.swift
+//  STOMPCommand.swift
 //  STOMPNetworking
 //
 //  Created by Valentin Cherepyanko on 29.03.2021.
@@ -8,7 +8,7 @@
 import Foundation
 
 /// Перечисление STOMP команд.
-enum StompCommand: String {
+enum STOMPCommand: String {
 
     // MARK: - Команды клиента.
 
@@ -46,7 +46,7 @@ enum StompCommand: String {
     ///   - text: Строковое представление команды.
     init(text: String) throws {
 
-        guard let command = StompCommand(rawValue: text) else {
+        guard let command = STOMPCommand(rawValue: text) else {
             let info = [NSLocalizedDescriptionKey: "Received command is undefined."]
             throw NSError(domain: ERROR_DOMAIN, code: 1_004, userInfo: info)
         }

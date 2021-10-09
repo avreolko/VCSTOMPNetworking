@@ -1,5 +1,5 @@
 //
-//  StompClient.swift
+//  STOMPClient.swift
 //  STOMPNetworking
 //
 //  Created by Valentin Cherepyanko on 29.03.2021.
@@ -10,15 +10,15 @@ import Starscream
 
 internal let ERROR_DOMAIN = "com.stompnetworking.error"
 
-public protocol IStompClientDelegate: AnyObject {
-    func stompClientDidConnected(_ client: IStompClient)
-    func stompClient(_ client: IStompClient, didErrorOccurred error: NSError)
-    func stompClient(_ client: IStompClient, didReceivedData data: Data, fromDestination destination: String)
+public protocol ISTOMPClientDelegate: AnyObject {
+    func stompClientDidConnected(_ client: ISTOMPClient)
+    func stompClient(_ client: ISTOMPClient, didErrorOccurred error: NSError)
+    func stompClient(_ client: ISTOMPClient, didReceivedData data: Data, fromDestination destination: String)
 }
 
-public protocol IStompClient: AnyObject {
+public protocol ISTOMPClient: AnyObject {
 
-    var delegate: IStompClientDelegate? { get set }
+    var delegate: ISTOMPClientDelegate? { get set }
 
     func connect()
     func disconnect()
@@ -27,14 +27,14 @@ public protocol IStompClient: AnyObject {
     func send(json: String, to destination: String)
 }
 
-public final class StompClient: IStompClient {
+public final class STOMPClient: ISTOMPClient {
 
     private struct Settings {
         static let stompVersion = "1.2"
         static let reconnectDelay: TimeInterval = 1
     }
 
-    public weak var delegate: IStompClientDelegate?
+    public weak var delegate: ISTOMPClientDelegate?
 
     private var socket: IWebSocket
     private var heartbeatTimer: Timer?
@@ -61,40 +61,40 @@ public final class StompClient: IStompClient {
     public func subscribe(_ destination: String, parameters: [String: String]? = nil) -> String {
 
         let id = UUID().uuidString
-        var headers: Set<StompHeader> = [.id(id), .destination(path: destination)]
+        var headers: Set<STOMPHeader> = [.id(id), .destination(path: destination)]
         parameters?.forEach { headers.insert(.custom(key: $0, value: $1)) }
 
-        let frame = StompFrame(command: .subscribe, headers: headers)
+        let frame = STOMPFrame(command: .subscribe, headers: headers)
         sendFrame(frame)
 
         return id
     }
 
     public func unsubscribe(_ destination: String, subscriptionID: String) {
-        let headers: Set<StompHeader> = [.id(subscriptionID), .destination(path: destination)]
-        let frame = StompFrame(command: .unsubscribe, headers: headers)
+        let headers: Set<STOMPHeader> = [.id(subscriptionID), .destination(path: destination)]
+        let frame = STOMPFrame(command: .unsubscribe, headers: headers)
         sendFrame(frame)
     }
 
     public func send(json: String, to destination: String) {
-        let headers: Set<StompHeader> = [.destination(path: destination), .contentType(type: "application/json")]
-        let frame = StompFrame(command: .send, headers: headers, body: json)
+        let headers: Set<STOMPHeader> = [.destination(path: destination), .contentType(type: "application/json")]
+        let frame = STOMPFrame(command: .send, headers: headers, body: json)
         sendFrame(frame)
     }
 }
 
-internal extension StompClient {
+internal extension STOMPClient {
 
     func websocketDidConnect() {
 
         let heartbeatString = String(format: "%.0f", heartbeatInterval * 1_000)
 
-        let headers: Set<StompHeader> = [
+        let headers: Set<STOMPHeader> = [
             .acceptVersion(version: Settings.stompVersion),
             .heartBeat(value: "\(heartbeatString),0")
         ]
 
-        let frame = StompFrame(command: .connect, headers: headers)
+        let frame = STOMPFrame(command: .connect, headers: headers)
         sendFrame(frame)
     }
 
@@ -108,7 +108,7 @@ internal extension StompClient {
 
         do {
 
-            let frame = try StompFrame(text: text)
+            let frame = try STOMPFrame(text: text)
 
             switch frame.command {
             case .connected:
@@ -130,9 +130,9 @@ internal extension StompClient {
     }
 }
 
-private extension StompClient {
+private extension STOMPClient {
 
-    func sendFrame(_ frame: StompFrame) {
+    func sendFrame(_ frame: STOMPFrame) {
         socket.write(string: frame.stringRepresentation)
         resetHeartbeatTimer()
     }
@@ -142,7 +142,7 @@ private extension StompClient {
         heartbeatTimer?.invalidate()
 
         heartbeatTimer = Timer.scheduledTimer(
-            timeInterval: heartbeatInterval,
+            timeInterval: heartbeatInterval / 2,
             target: self,
             selector: #selector(heartbeat),
             userInfo: nil,

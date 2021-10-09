@@ -1,6 +1,5 @@
 //
-//  StompClientTests.swift
-//  StompClientTests
+//  STOMPClientTests.swift
 //
 //  Created by Valentin Cherepyanko on 29.03.2021.
 //
@@ -9,16 +8,16 @@ import XCTest
 import Starscream
 @testable import STOMPNetworking
 
-final class StompClientTests: XCTestCase {
+final class STOMPClientTests: XCTestCase {
 
     private var clientDelegateMock: StompClientDelegateMock!
-    private var client: StompClient!
+    private var client: STOMPClient!
     private var socketMock: WebSocketMock!
 
     override func setUp() {
         super.setUp()
         socketMock = WebSocketMock()
-        client = StompClient(socket: socketMock)
+        client = STOMPClient(socket: socketMock)
         clientDelegateMock = StompClientDelegateMock()
         client.delegate = clientDelegateMock
     }
@@ -92,22 +91,22 @@ final class StompClientTests: XCTestCase {
     }
 }
 
-private final class StompClientDelegateMock: NSObject, IStompClientDelegate {
+private final class StompClientDelegateMock: NSObject, ISTOMPClientDelegate {
 
     var didConnectedMethodCalled = false
     var receivedData: Data?
     var receivedError: NSError?
     var destination: String?
 
-    func stompClientDidConnected(_ client: IStompClient) {
+    func stompClientDidConnected(_ client: ISTOMPClient) {
         didConnectedMethodCalled = true
     }
 
-    func stompClient(_ client: IStompClient, didErrorOccurred error: NSError) {
+    func stompClient(_ client: ISTOMPClient, didErrorOccurred error: NSError) {
         receivedError = error
     }
 
-    func stompClient(_ client: IStompClient, didReceivedData data: Data, fromDestination destination: String) {
+    func stompClient(_ client: ISTOMPClient, didReceivedData data: Data, fromDestination destination: String) {
         receivedData = data
         self.destination = destination
     }

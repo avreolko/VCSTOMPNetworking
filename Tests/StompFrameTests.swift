@@ -1,6 +1,5 @@
 //
-//  StompFrameTests.swift
-//  StompClient
+//  STOMPFrameTests.swift
 //
 //  Created by Valentin Cherepyanko on 29.03.2021.
 //
@@ -8,24 +7,24 @@
 import XCTest
 @testable import STOMPNetworking
 
-final class StompFrameTests: XCTestCase {
+final class STOMPFrameTests: XCTestCase {
 
     func test_frame_creation() {
 
         // Arrange
         let parameters = ["eid" : "5566", "mid" : "7788"]
 
-        var headers: Set<StompHeader> = [.destination(path: "/path"), .id("sub-id")]
+        var headers: Set<STOMPHeader> = [.destination(path: "/path"), .id("sub-id")]
 
         for (key, value) in parameters {
             headers.insert(.custom(key: key, value: value))
         }
 
         // Act
-        let frame = StompFrame(command: .subscribe, headers: headers)
+        let frame = STOMPFrame(command: .subscribe, headers: headers)
 
         // Assert
-        XCTAssertEqual(frame.command, StompCommand.subscribe)
+        XCTAssertEqual(frame.command, STOMPCommand.subscribe)
         XCTAssertEqual(frame.headers.count, 4)
     }
     
@@ -35,10 +34,10 @@ final class StompFrameTests: XCTestCase {
         let string = "MESSAGE\ndestination:/user/topic/view/0\nsubscription:sub-0\nmessage-id:1234\ncontent-length:0\n\nbody\n\0"
 
         // Act
-        let frame = try StompFrame(text: string)
+        let frame = try STOMPFrame(text: string)
 
         // Assert
-        XCTAssertEqual(frame.command, StompCommand.message)
+        XCTAssertEqual(frame.command, STOMPCommand.message)
         XCTAssertEqual(frame.headers.count, 4)
         XCTAssertNotNil(frame.body)
     }
@@ -49,10 +48,10 @@ final class StompFrameTests: XCTestCase {
         let string = "MESSAGE\ndestination:/user/topic/view/0\nsubscription:sub-0\nmessage-id:1234\ncontent-length:0\0"
 
         // Act
-        let frame = try StompFrame(text: string)
+        let frame = try STOMPFrame(text: string)
 
         // Assert
-        XCTAssertEqual(frame.command, StompCommand.message)
+        XCTAssertEqual(frame.command, STOMPCommand.message)
         XCTAssertEqual(frame.headers.count, 4)
         XCTAssertNil(frame.body)
     }
@@ -63,10 +62,10 @@ final class StompFrameTests: XCTestCase {
         let string = "MESSAGE\n\nbody\n\0"
 
         // Act
-        let frame = try StompFrame(text: string)
+        let frame = try STOMPFrame(text: string)
 
         // Assert
-        XCTAssertEqual(frame.command, StompCommand.message)
+        XCTAssertEqual(frame.command, STOMPCommand.message)
         XCTAssertEqual(frame.headers.count, 0)
         XCTAssertNotNil(frame.body)
     }
@@ -77,10 +76,10 @@ final class StompFrameTests: XCTestCase {
         let string = "MESSAGE\n\n\0"
 
         // Act
-        let frame = try StompFrame(text: string)
+        let frame = try STOMPFrame(text: string)
 
         // Assert
-        XCTAssertEqual(frame.command, StompCommand.message)
+        XCTAssertEqual(frame.command, STOMPCommand.message)
         XCTAssertEqual(frame.headers.count, 0)
         XCTAssertNotNil(frame.body)
     }
@@ -91,10 +90,10 @@ final class StompFrameTests: XCTestCase {
         let string = "MESSAGE\n\nbody\nbody\n\0"
 
         // Act
-        let frame = try StompFrame(text: string)
+        let frame = try STOMPFrame(text: string)
 
         // Assert
-        XCTAssertEqual(frame.command, StompCommand.message)
+        XCTAssertEqual(frame.command, STOMPCommand.message)
         XCTAssertEqual(frame.body, "body\nbody\n")
     }
 
@@ -105,7 +104,7 @@ final class StompFrameTests: XCTestCase {
 
         // Act
         // Assert
-        XCTAssertThrowsError(try StompFrame(text: string))
+        XCTAssertThrowsError(try STOMPFrame(text: string))
     }
 
     func test_empty_command_error_throwing() throws {
@@ -115,7 +114,7 @@ final class StompFrameTests: XCTestCase {
 
         // Act
         // Assert
-        XCTAssertThrowsError(try StompFrame(text: string))
+        XCTAssertThrowsError(try STOMPFrame(text: string))
     }
 
     func test_unknown_command_error_throwing() throws {
@@ -125,6 +124,6 @@ final class StompFrameTests: XCTestCase {
 
         // Act
         // Assert
-        XCTAssertThrowsError(try StompFrame(text: string))
+        XCTAssertThrowsError(try STOMPFrame(text: string))
     }
 }
