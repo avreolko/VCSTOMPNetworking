@@ -29,10 +29,29 @@ import Starscream
 internal let ERROR_DOMAIN = "com.stompnetworking.error"
 
 /// Public interface of STOMP client delegate.
+///
 /// Allows mocking for internal testing.
 public protocol ISTOMPClientDelegate: AnyObject {
+
+    /// Method, that will be called on successful client connection.
+    ///
+    /// - Parameters:
+    ///   - client: Client instance connected to the server.
     func stompClientDidConnected(_ client: ISTOMPClient)
+
+    /// Metahd, that will be called on any error occured in process of communication between client and server.
+    ///
+    /// - Parameters:
+    ///   - client: Client instance that received an error.
+    ///   - error: Received error.
     func stompClient(_ client: ISTOMPClient, didErrorOccurred error: NSError)
+
+    /// Method, that will called on receiving some data from the server.
+    ///
+    /// - Parameters:
+    ///   - client: Client instance that received a data.
+    ///   - data: Received data.
+    ///   - destination: Subscribed destination.
     func stompClient(_ client: ISTOMPClient, didReceivedData data: Data, fromDestination destination: String)
 }
 
