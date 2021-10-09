@@ -7,43 +7,43 @@
 
 import Foundation
 
-/// Перечисление STOMP команд.
+/// STOMP commands enumeration.
 enum STOMPCommand: String {
 
-    // MARK: - Команды клиента.
+    // MARK: - Client commands
 
-    /// Команда установки подключения.
+    /// Connection command.
     case connect = "CONNECT"
 
-    /// Команда завершения подключения.
+    /// Disconnection command.
     case disconnect = "DISCONNECT"
 
-    /// Команда подписки на назначение.
+    /// Subscription command.
     case subscribe = "SUBSCRIBE"
 
-    /// Команда отписки на назначение.
+    /// Unsubscription command.
     case unsubscribe = "UNSUBSCRIBE"
 
-    /// Команда отправки сообщения.
+    /// Command for data sending.
     case send = "SEND"
 
-    // MARK: - Команды сервера.
+    // MARK: - Server commands
 
-    /// Команда подтверждения установки подключения.
+    /// Command for connection affirmation.
     case connected = "CONNECTED"
 
-    /// Команда получения сообщения.
+    /// Command for message receiving.
     case message = "MESSAGE"
 
-    /// Команда ошибки.
+    /// Error command.
     case error = "ERROR"
 
-    /// Метод инициализации команды, выбрасывающий ошибку.
-    ///
-    /// Нужен для того, чтобы вместо `nil` получать ошибку с кодом и доменом.
+    /// Method for command initialization from string representation.
     ///
     /// - Parameters:
-    ///   - text: Строковое представление команды.
+    ///   - text: Command string representation.
+    ///
+    /// - Throws: Error in `com.stompnetworking.error` domain if command was not recognized.
     init(text: String) throws {
 
         guard let command = STOMPCommand(rawValue: text) else {

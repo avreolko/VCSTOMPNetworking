@@ -7,63 +7,69 @@
 
 import Foundation
 
-/// Фрейм STOMP-протокола.
+/// STOMP frame.
 struct STOMPFrame {
 
     private static let lineFeed = "\n"
     private static let nullChar = "\0"
 
-    /// Команда фрейма.
+    /// Frame command.
     private(set) var command: STOMPCommand
 
-    /// Заголовки фрейма.
+    /// Frame headers.
     private(set) var headers: Set<STOMPHeader>
 
-    /// Тело фрейма.
+    /// Frame body.
     private(set) var body: String?
 
-    /// Метод инициализации фрейма.
+    /// STOMP frame initialization method.
     ///
     /// - Parameters:
-    ///   - command: Команда фрейма.
-    ///   - headers: Заголовки фрейма.
-    ///   - body: Тело фрейма.
+    ///   - command: STOMP command associated with this frame.
+    ///   - headers: Frame headers dictionary.
+    ///   - body: Optional body in string representation.
     init(command: STOMPCommand, headers: Set<STOMPHeader> = [], body: String? = nil) {
         self.command = command
         self.headers = headers
         self.body = body
     }
 
-    /// Метод инициализации фрейма.
+    /// STOMP frame initialization method.
+    ///
+    /// For more details read official documentation:
+    ///
+    /// https://stomp.github.io/stomp-specification-1.2.html#STOMP_Frames
     ///
     /// - Parameters:
-    ///   - text: Текстовое представление фрейма.
+    ///   - text: String representation of the STOMP frame.
+    ///
+    /// - Throws: Error in `com.stompnetworking.error` domain if text parsing failed.
     init(text: String) throws {
 
         let parts: [String] = text.components(separatedBy: Self.lineFeed + Self.lineFeed)
 
         guard !parts.isEmpty else {
-            let info = [NSLocalizedDescriptionKey: "Полученный фрейм пуст."]
+            let info = [NSLocalizedDescriptionKey: "Frame is empty."]
             throw NSError(domain: ERROR_DOMAIN, code: 1_002, userInfo: info)
         }
 
         guard parts.count < 3 else {
-            let info = [NSLocalizedDescriptionKey: "Полученный фрейм не соответствует протоколу."]
+            let info = [NSLocalizedDescriptionKey: "Received frame does not conform specification."]
             throw NSError(domain: ERROR_DOMAIN, code: 1_003, userInfo: info)
         }
 
-        // Команда + заголовки
+        // Command + headers
         let firstPartComponents = parts.first?.split(separator: Character(Self.lineFeed))
 
         guard let commandComponent = firstPartComponents?.first else {
-            let info = [NSLocalizedDescriptionKey: "Во фрейме отсутствует команда."]
+            let info = [NSLocalizedDescriptionKey: "Frame does not have a command."]
             throw NSError(domain: ERROR_DOMAIN, code: 1_004, userInfo: info)
         }
 
-        // Команда
+        // Command initialization
         let command = try STOMPCommand(text: String(commandComponent))
 
-        // Заголовки
+        // Headers
         let headerComponents = firstPartComponents?.dropFirst() ?? []
 
         let headers: [STOMPHeader] = headerComponents.compactMap { headerString in
@@ -78,7 +84,7 @@ struct STOMPFrame {
         self.init(command: command, headers: Set(headers), body: body)
     }
 
-    /// Строковое представление фрейма.
+    /// String representation of this frame.
     var stringRepresentation: String {
         var string = command.rawValue + Self.lineFeed
         headers.forEach { string += $0.key + ":" + $0.value + Self.lineFeed }
@@ -92,7 +98,7 @@ struct STOMPFrame {
         return string
     }
 
-    /// Сообщение фрейма.
+    /// Frame message.
     var message: String {
         if let header = headers.filter(\.isMessage).first {
             return header.value
@@ -101,7 +107,7 @@ struct STOMPFrame {
         }
     }
 
-    /// Назначение фрейма.
+    /// Frame destination.
     var destination: String {
         if let header = headers.filter(\.isDestination).first {
             return header.value

@@ -7,64 +7,65 @@
 
 import Foundation
 
-/// Перечисление STOMP заголовков.
+/// STOMP header enumeration.
 enum STOMPHeader {
 
-    /// Версия протокола, посылаемая клиентом.
-    /// Возможные значения:
+    /// Protocol version that client sends.
+    ///
+    /// Possible values:
     /// - 1.0
     /// - 1.1
     /// - 1.2
     case acceptVersion(version: String)
 
-    /// Настройки сердцебиения.
+    /// Hearbeat setting header.
     ///
     /// - Parameters:
-    ///   - value: Настройки в формате `x,y`. Где:
-    ///   - x: Интервал сердцебиения клиента в миллисекундах.
-    ///   - y: Желаемый интервал сердцебиения сервера в миллисекундах.
+    ///   - value: Settings in format of `x,y`. Where:
+    ///   - x: Clint hearbeat interval in milliseconds.
+    ///   - y: Desired server heartbeat interval.
     case heartBeat(value: String)
 
-    /// Назначение фрейма.
+    /// Frame destination header.
     ///
     /// - Parameters:
-    ///   - path: Строковое представление назначения.
+    ///   - path: String representation of the destination.
     case destination(path: String)
 
-    /// Идентификатор фрейма.
+    /// Frame identifier.
     ///
     /// - Parameters:
-    ///   - id: Значение идентификатора.
+    ///   - id: Identifier value.
     case id(_ id: String)
 
-    /// Версия протокола, посылаемая сервером.
+    /// Protocol version that server sends to client.
     ///
-    /// Возможные значения версии:
+    /// Possible values:
     /// - 1.0
     /// - 1.1
     /// - 1.2
     case version(version: String)
 
-    /// Заголовок с идентификатором подписки, присылаемый сервером.
+    /// Header with unique subscription identifier.
     case subscription(subId: String)
 
-    /// Заголовок, содержащий идентификатор сообщения.
+    /// Header with message identifier.
     case messageId(id: String)
 
-    /// Длина отсылаемого и получаемого контента.
+    /// Length of sent or received content.
     case contentLength(length: String)
 
-    /// Сообщение.
+    /// Message header.
     case message(message: String)
 
-    /// Тип контента.
+    /// Content type header.
     case contentType(type: String)
 
-    /// Любой другой заголовок.
+    /// Any other header value.
     ///
     /// - Parameters:
-    ///   - key: Ключ заголовка.
-    ///   - value: Значение заголовка.
+    ///   - key: Header key.
+    ///   - value: Header value.
     case custom(key: String, value: String)
 
     init(key: String, value: String) {
@@ -81,7 +82,7 @@ enum STOMPHeader {
         }
     }
 
-    /// Флаг, показывающий является ли заголовок сообщением.
+    /// Flag, that indicates header as message.
     var isMessage: Bool {
         switch self {
         case .message: return true
@@ -89,7 +90,7 @@ enum STOMPHeader {
         }
     }
 
-    /// Флаг, показывающий является ли заголовок назначением.
+    /// Flag, that indicates header as destination.
     var isDestination: Bool {
         switch self {
         case .destination: return true
@@ -97,24 +98,24 @@ enum STOMPHeader {
         }
     }
 
-    /// Ключ заголовка.
+    /// Header key.
     var key: String {
         switch self {
         case .acceptVersion: return "accept-version"
         case .heartBeat: return "heart-beat"
         case .destination: return "destination"
         case .id: return "id"
-        case .custom(let key, _): return key
         case .version: return "version"
         case .subscription: return "subscription"
         case .messageId: return "message-id"
         case .contentLength: return "content-length"
         case .message: return "message"
         case .contentType: return "content-type"
+        case .custom(let key, _): return key
         }
     }
 
-    /// Значение заголовка.
+    /// Header value.
     var value: String {
         switch self {
         case .acceptVersion(let version): return version
