@@ -10,10 +10,12 @@ import Foundation
 /// STOMP commands enumeration.
 enum STOMPCommand: String {
 
-    // MARK: - Client commands
+    // MARK: - Common commands
 
     /// Connection command.
     case connect = "CONNECT"
+
+    // MARK: - Client commands
 
     /// Disconnection command.
     case disconnect = "DISCONNECT"
